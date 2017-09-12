@@ -79,7 +79,7 @@ if __name__ == '__main__':
     message_output()
 
     if len(sys.argv) == 1:
-        input_path = '/home/guillemnicolau/WhatsappStatistics/data/input.txt'
+        input_path = 'data/input.txt'
     else:
         input_path = sys.argv[1]
     input_data = process_input(input_path)
