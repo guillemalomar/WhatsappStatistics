@@ -46,10 +46,10 @@ def show_modes():
     :return:
     """
     print "Available modes:"
-    print " 1 - Get Pages by Score Ranking\n" + \
-          " 2 - Get Pages by Comment Ranking\n" + \
-          " 3 - Get Users by Submissions Score Ranking\n" + \
-          " 4 - Get Users by Submissions Quantity"
+    print " 1 - Plot messages send per day\n" + \
+          " 2 - Plot messages send per hour for all days\n" + \
+          " 3 - Plot messages sent by each user\n" + \
+          " 4 - Plot characters sent by each user"
 
 
 def check_input(input_var):
