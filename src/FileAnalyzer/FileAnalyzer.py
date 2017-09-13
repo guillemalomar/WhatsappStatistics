@@ -1,7 +1,7 @@
 import re
 import pylab as pl
 import numpy as np
-
+import math
 
 _date_line = re.compile('[0-9]+/[0-9]+/[0-9]+?')
 _message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w0-9:+, ]+')
@@ -32,10 +32,19 @@ class FileAnalyzer:
         """
         x = np.arange(len(self.messages_day))
         pl.bar(x, self.messages_day.values(), align='center', width=0.5)
-        print "self.messages_day.keys():", self.messages_day.keys()
         pl.xticks(x, self.messages_day.keys(), rotation=45)
-        ymax = max(self.messages_day.values()) + 1
+        if max(self.messages_user.values()) > 10000:
+            ymax = math.ceil(max(self.messages_day.values()) / 10000.0) * 10000
+        elif max(self.messages_day.values()) > 1000:
+            ymax = math.ceil(max(self.messages_day.values()) / 1000.0) * 1000
+        elif max(self.messages_day.values()) > 100:
+            ymax = math.ceil(max(self.messages_day.values()) / 100.0) * 100
+        elif max(self.messages_day.values()) > 10:
+            ymax = math.ceil(max(self.messages_day.values()) / 10.0) * 10
+        else:
+            max(self.messages_day.values()) + 1
         pl.ylim(0, ymax)
+        pl.title('Messages for each day')
         pl.show()
 
     def plot_messages_hours(self):
@@ -46,6 +55,7 @@ class FileAnalyzer:
         lists = sorted(self.messages_hours.items())
         x, y = zip(*lists)
         pl.plot(x, y)
+        pl.title('Messages classified by hour')
         pl.show()
 
     def plot_messages_user(self):
@@ -56,9 +66,18 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user))
         pl.bar(x, self.messages_user.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user.keys(), rotation=45)
-        ymax = max(self.messages_user.values()) + 1
+        if max(self.messages_user.values()) > 10000:
+            ymax = math.ceil(max(self.messages_user.values()) / 10000.0) * 10000
+        elif max(self.messages_user.values()) > 1000:
+            ymax = math.ceil(max(self.messages_user.values()) / 1000.0) * 1000
+        elif max(self.messages_user.values()) > 100:
+            ymax = math.ceil(max(self.messages_user.values()) / 100.0) * 100
+        elif max(self.messages_user.values()) > 10:
+            ymax = math.ceil(max(self.messages_user.values()) / 10.0) * 10
+        else:
+            max(self.messages_user.values()) + 1
         pl.ylim(0, ymax)
-        # pl.savefig('foo.png')
+        pl.title('Messages classified by user')
         pl.show()
 
     def plot_messages_user_chars(self):
@@ -69,8 +88,20 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user_chars))
         pl.bar(x, self.messages_user_chars.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user_chars.keys(), rotation=45)
-        ymax = max(self.messages_user_chars.values()) + 1
+        if max(self.messages_user_chars.values()) > 100000:
+            ymax = math.ceil(max(self.messages_user_chars.values()) / 100000.0) * 100000
+        elif max(self.messages_user_chars.values()) > 10000:
+            ymax = math.ceil(max(self.messages_user_chars.values()) / 10000.0) * 10000
+        elif max(self.messages_user_chars.values()) > 1000:
+            ymax = math.ceil(max(self.messages_user_chars.values()) / 1000.0) * 1000
+        elif max(self.messages_user_chars.values()) > 100:
+            ymax = math.ceil(max(self.messages_user_chars.values()) / 100.0) * 100
+        elif max(self.messages_user_chars.values()) > 10:
+            ymax = math.ceil(max(self.messages_user_chars.values()) / 10.0) * 10
+        else:
+            max(self.messages_user_chars.values()) + 1
         pl.ylim(0, ymax)
+        pl.title('Characters classified by user')
         pl.show()
 
     def plot_messages_user_word(self):
@@ -81,8 +112,20 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user_word))
         pl.bar(x, self.messages_user_word.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user_word.keys(), rotation=45)
-        ymax = max(self.messages_user_word.values()) + 1
+        if max(self.messages_user_word.values()) > 100000:
+            ymax = math.ceil(max(self.messages_user_word.values()) / 100000.0) * 100000
+        elif max(self.messages_user_word.values()) > 10000:
+            ymax = math.ceil(max(self.messages_user_word.values()) / 10000.0) * 10000
+        elif max(self.messages_user_word.values()) > 1000:
+            ymax = math.ceil(max(self.messages_user_word.values()) / 1000.0) * 1000
+        elif max(self.messages_user_word.values()) > 100:
+            ymax = math.ceil(max(self.messages_user_word.values()) / 100.0) * 100
+        elif max(self.messages_user_word.values()) > 10:
+            ymax = math.ceil(max(self.messages_user_word.values()) / 10.0) * 10
+        else:
+            max(self.messages_user_word.values()) + 1
         pl.ylim(0, ymax)
+        pl.title('Times every user has said a given word')
         pl.show()
 
     def process_input(self):

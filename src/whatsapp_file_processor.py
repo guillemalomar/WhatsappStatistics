@@ -49,8 +49,8 @@ def show_modes():
     print " 1 - Plot messages send per day\n" + \
           " 2 - Plot messages send per hour for all days\n" + \
           " 3 - Plot messages sent by each user\n" + \
-          " 4 - Plot characters sent by each user"
-    print " 5 - Plot times each user said a specific word"
+          " 4 - Plot characters sent by each user\n" + \
+          " 5 - Plot times each user said a specific word"
 
 
 def check_input(input_var):
@@ -85,8 +85,6 @@ if __name__ == '__main__':
         input_path = sys.argv[1]
     input_data = process_input(input_path)
 
-    my_file_analyzer = FileAnalyzer(input_data)
-
     message_header()
     message_output()
 
@@ -96,6 +94,8 @@ if __name__ == '__main__':
             print "***************************"
             var = raw_input("Please, enter a new mode: ")
             correct_input = check_input(var)
+
+        my_file_analyzer = FileAnalyzer(input_data)
         if var == '1':
             my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_days()
