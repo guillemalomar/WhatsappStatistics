@@ -1,5 +1,6 @@
 import sys
 from FileAnalyzer.FileAnalyzer import FileAnalyzer
+import argparse
 
 
 def clean_screen():
@@ -80,12 +81,18 @@ def check_input(input_var):
 if __name__ == '__main__':
 
     clean_screen()
+
+    # Arguments are taken from command line
+    parser = argparse.ArgumentParser(description='Whatsapp Statistics',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--input-file', action="store", dest="input_file",
+                        help="Path to the input file",
+                        default="data/input.txt", type=str)
+    args = parser.parse_args()
+    input_path = args.input_file
+
     message_output()
 
-    if len(sys.argv) == 1:
-        input_path = 'data/input2.txt'
-    else:
-        input_path = sys.argv[1]
     input_data = process_input(input_path)
 
     message_header()
