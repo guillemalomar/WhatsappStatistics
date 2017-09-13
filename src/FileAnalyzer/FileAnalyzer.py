@@ -40,6 +40,7 @@ class FileAnalyzer:
         pl.xticks(x, self.messages_day.keys(), rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_day)
         pl.ylim(0, y_max)
+        pl.axis('auto')
         pl.title('Messages for each day')
         pl.show()
 
@@ -64,6 +65,7 @@ class FileAnalyzer:
         pl.xticks(x, self.messages_user.keys(), rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user)
         pl.ylim(0, y_max)
+        pl.axis('auto')
         pl.title('Messages classified by user')
         pl.show()
 
@@ -77,6 +79,7 @@ class FileAnalyzer:
         pl.xticks(x, self.messages_user_chars.keys(), rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_chars)
         pl.ylim(0, y_max)
+        pl.axis('auto')
         pl.title('Characters classified by user')
         pl.show()
 
@@ -90,6 +93,7 @@ class FileAnalyzer:
         pl.xticks(x, self.messages_user_word.keys(), rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_word)
         pl.ylim(0, y_max)
+        pl.axis('auto')
         pl.title('Times every user has said a given word')
         pl.show()
 
