@@ -3,7 +3,7 @@ import pylab as pl
 import numpy as np
 
 
-_date_line = re.compile('[0-9]+/[0-9]+/[0-9]+')
+_date_line = re.compile('[0-9]+/[0-9]+/[0-9]+?')
 _message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w0-9:+, ]+')
 
 
@@ -19,6 +19,11 @@ class FileAnalyzer:
         self.messages_hours = {}
         self.messages_user = {}
         self.messages_user_chars = {}
+        self.messages_user_word = {}
+        self.word = None
+
+    def set_word(self, word):
+        self.word = word
 
     def plot_messages_days(self):
         """
@@ -27,6 +32,7 @@ class FileAnalyzer:
         """
         x = np.arange(len(self.messages_day))
         pl.bar(x, self.messages_day.values(), align='center', width=0.5)
+        print "self.messages_day.keys():", self.messages_day.keys()
         pl.xticks(x, self.messages_day.keys(), rotation=45)
         ymax = max(self.messages_day.values()) + 1
         pl.ylim(0, ymax)
@@ -67,6 +73,18 @@ class FileAnalyzer:
         pl.ylim(0, ymax)
         pl.show()
 
+    def plot_messages_user_word(self):
+        """
+        This method plots the number of chars from all messages sent per user
+        :return:
+        """
+        x = np.arange(len(self.messages_user_word))
+        pl.bar(x, self.messages_user_word.values(), align='center', width=0.5)
+        pl.xticks(x, self.messages_user_word.keys(), rotation=45)
+        ymax = max(self.messages_user_word.values()) + 1
+        pl.ylim(0, ymax)
+        pl.show()
+
     def process_input(self):
         """
         This method processes the input data and accumulates all interesting
@@ -77,7 +95,7 @@ class FileAnalyzer:
             lines = row.split('\n')
             for line in lines:
                 m = _date_line.match(line)
-                if m is not None:
+                if m is not None and ']' not in line:
                     self.messages_day[line] = self.messages_day.get(line, 0) + 1
                 else:
                     if 'El codi de seguretat de ' not in line and \
@@ -88,7 +106,9 @@ class FileAnalyzer:
                        'Has canviat ' not in line and \
                        'ha canviat ' not in line and \
                        ' expulsat ' not in line and \
-                       'aquest xat i trucades ara estan assegurats' not in line:
+                       'aquest xat i trucades ara estan assegurats' not in line and \
+                       ' t\'ha expulsat' not in line and \
+                       ' t\'ha afegit' not in line:
                         n = _message_line.match(line)
                         if n is not None:
                             hour = line.split(':')[0]
@@ -99,3 +119,6 @@ class FileAnalyzer:
                             self.messages_user[user] = self.messages_user.get(user, 0) + 1
                             message = line.split(':')[-1]
                             self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(message)
+                            self.messages_user_word[user] = self.messages_user_word.get(user, 0)
+                            if str(self.word).lower() in message.lower():
+                                self.messages_user_word[user] = self.messages_user_word[user] + 1

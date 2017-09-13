@@ -46,10 +46,11 @@ def show_modes():
     :return:
     """
     print "Available modes:"
-    print " 1 - Get Pages by Score Ranking\n" + \
-          " 2 - Get Pages by Comment Ranking\n" + \
-          " 3 - Get Users by Submissions Score Ranking\n" + \
-          " 4 - Get Users by Submissions Quantity"
+    print " 1 - Plot messages send per day\n" + \
+          " 2 - Plot messages send per hour for all days\n" + \
+          " 3 - Plot messages sent by each user\n" + \
+          " 4 - Plot characters sent by each user"
+    print " 5 - Plot times each user said a specific word"
 
 
 def check_input(input_var):
@@ -68,10 +69,10 @@ def check_input(input_var):
     elif input_var.lower() == 'help':
         message_output()
         return False
-    elif input_var not in ['1', '2', '3', '4']:
+    elif input_var not in ['1', '2', '3', '4', '5']:
         print "Please enter a valid mode."
         return False
-    return True
+    return input_var
 
 if __name__ == '__main__':
 
@@ -79,13 +80,12 @@ if __name__ == '__main__':
     message_output()
 
     if len(sys.argv) == 1:
-        input_path = 'data/input.txt'
+        input_path = 'data/input2.txt'
     else:
         input_path = sys.argv[1]
     input_data = process_input(input_path)
 
     my_file_analyzer = FileAnalyzer(input_data)
-    my_file_analyzer.process_input()
 
     message_header()
     message_output()
@@ -97,10 +97,20 @@ if __name__ == '__main__':
             var = raw_input("Please, enter a new mode: ")
             correct_input = check_input(var)
         if var == '1':
+            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_days()
         elif var == '2':
+            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_hours()
         elif var == '3':
+            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_user()
         elif var == '4':
+            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_user_chars()
+        elif var == '5':
+            word_to_search = raw_input("Please, enter a word to be searched: ")
+            my_file_analyzer.set_word(word_to_search)
+            my_file_analyzer.process_input()
+            my_file_analyzer.plot_messages_user_word()
+            my_file_analyzer.messages_user_word = {}
