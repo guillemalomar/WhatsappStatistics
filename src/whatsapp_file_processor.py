@@ -2,8 +2,11 @@ import sys
 from FileAnalyzer.FileAnalyzer import FileAnalyzer
 
 
-# Method called to do a 'clear', just for application visualization purposes
 def clean_screen():
+    """
+    Method called to do a 'clear', just for application visualization purposes
+    :return:
+    """
     print(chr(27) + "[2J")
 
 

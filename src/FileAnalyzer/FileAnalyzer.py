@@ -23,6 +23,11 @@ class FileAnalyzer:
         self.word = None
 
     def set_word(self, word):
+        """
+        Assigns a given word to the FileAnalyzer
+        :param word: specified word by the user
+        :return:
+        """
         self.word = word
 
     def plot_messages_days(self):
@@ -33,17 +38,8 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_day))
         pl.bar(x, self.messages_day.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_day.keys(), rotation=45)
-        if max(self.messages_user.values()) > 10000:
-            ymax = math.ceil(max(self.messages_day.values()) / 10000.0) * 10000
-        elif max(self.messages_day.values()) > 1000:
-            ymax = math.ceil(max(self.messages_day.values()) / 1000.0) * 1000
-        elif max(self.messages_day.values()) > 100:
-            ymax = math.ceil(max(self.messages_day.values()) / 100.0) * 100
-        elif max(self.messages_day.values()) > 10:
-            ymax = math.ceil(max(self.messages_day.values()) / 10.0) * 10
-        else:
-            max(self.messages_day.values()) + 1
-        pl.ylim(0, ymax)
+        y_max = FileAnalyzer.calculate_max(self.messages_day)
+        pl.ylim(0, y_max)
         pl.title('Messages for each day')
         pl.show()
 
@@ -66,17 +62,8 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user))
         pl.bar(x, self.messages_user.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user.keys(), rotation=45)
-        if max(self.messages_user.values()) > 10000:
-            ymax = math.ceil(max(self.messages_user.values()) / 10000.0) * 10000
-        elif max(self.messages_user.values()) > 1000:
-            ymax = math.ceil(max(self.messages_user.values()) / 1000.0) * 1000
-        elif max(self.messages_user.values()) > 100:
-            ymax = math.ceil(max(self.messages_user.values()) / 100.0) * 100
-        elif max(self.messages_user.values()) > 10:
-            ymax = math.ceil(max(self.messages_user.values()) / 10.0) * 10
-        else:
-            max(self.messages_user.values()) + 1
-        pl.ylim(0, ymax)
+        y_max = FileAnalyzer.calculate_max(self.messages_user)
+        pl.ylim(0, y_max)
         pl.title('Messages classified by user')
         pl.show()
 
@@ -88,19 +75,8 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user_chars))
         pl.bar(x, self.messages_user_chars.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user_chars.keys(), rotation=45)
-        if max(self.messages_user_chars.values()) > 100000:
-            ymax = math.ceil(max(self.messages_user_chars.values()) / 100000.0) * 100000
-        elif max(self.messages_user_chars.values()) > 10000:
-            ymax = math.ceil(max(self.messages_user_chars.values()) / 10000.0) * 10000
-        elif max(self.messages_user_chars.values()) > 1000:
-            ymax = math.ceil(max(self.messages_user_chars.values()) / 1000.0) * 1000
-        elif max(self.messages_user_chars.values()) > 100:
-            ymax = math.ceil(max(self.messages_user_chars.values()) / 100.0) * 100
-        elif max(self.messages_user_chars.values()) > 10:
-            ymax = math.ceil(max(self.messages_user_chars.values()) / 10.0) * 10
-        else:
-            max(self.messages_user_chars.values()) + 1
-        pl.ylim(0, ymax)
+        y_max = FileAnalyzer.calculate_max(self.messages_user_chars)
+        pl.ylim(0, y_max)
         pl.title('Characters classified by user')
         pl.show()
 
@@ -112,21 +88,32 @@ class FileAnalyzer:
         x = np.arange(len(self.messages_user_word))
         pl.bar(x, self.messages_user_word.values(), align='center', width=0.5)
         pl.xticks(x, self.messages_user_word.keys(), rotation=45)
-        if max(self.messages_user_word.values()) > 100000:
-            ymax = math.ceil(max(self.messages_user_word.values()) / 100000.0) * 100000
-        elif max(self.messages_user_word.values()) > 10000:
-            ymax = math.ceil(max(self.messages_user_word.values()) / 10000.0) * 10000
-        elif max(self.messages_user_word.values()) > 1000:
-            ymax = math.ceil(max(self.messages_user_word.values()) / 1000.0) * 1000
-        elif max(self.messages_user_word.values()) > 100:
-            ymax = math.ceil(max(self.messages_user_word.values()) / 100.0) * 100
-        elif max(self.messages_user_word.values()) > 10:
-            ymax = math.ceil(max(self.messages_user_word.values()) / 10.0) * 10
-        else:
-            max(self.messages_user_word.values()) + 1
-        pl.ylim(0, ymax)
+        y_max = FileAnalyzer.calculate_max(self.messages_user_word)
+        pl.ylim(0, y_max)
         pl.title('Times every user has said a given word')
         pl.show()
+
+    @staticmethod
+    def calculate_max(dictionary):
+        """
+        Method to calculate the plot height from a given dictionary
+        :param dictionary: obtained from processed data
+        :return:
+        """
+        max_val = max(dictionary.values())
+        if max_val > 100000:
+            y_max = math.ceil(max_val / 100000.0) * 100000
+        elif max_val > 10000:
+            y_max = math.ceil(max_val / 10000.0) * 10000
+        elif max_val > 1000:
+            y_max = math.ceil(max_val / 1000.0) * 1000
+        elif max_val > 100:
+            y_max = math.ceil(max_val / 100.0) * 100
+        elif max_val > 10:
+            y_max = math.ceil(max_val / 10.0) * 10
+        else:
+            y_max = max_val + 1
+        return y_max
 
     def process_input(self):
         """
@@ -164,4 +151,4 @@ class FileAnalyzer:
                             self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(message)
                             self.messages_user_word[user] = self.messages_user_word.get(user, 0)
                             if str(self.word).lower() in message.lower():
-                                self.messages_user_word[user] = self.messages_user_word[user] + 1
+                                self.messages_user_word[user] += 1
