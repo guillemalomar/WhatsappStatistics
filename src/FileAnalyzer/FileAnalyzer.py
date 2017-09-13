@@ -51,7 +51,7 @@ class FileAnalyzer:
         """
         lists = sorted(self.messages_hours.items())
         x, y = zip(*lists)
-        pl.plot(x, y)
+        pl.plot(x, y, marker='o')
         pl.title('Messages classified by hour')
         pl.show()
 
@@ -61,8 +61,15 @@ class FileAnalyzer:
         :return:
         """
         x = np.arange(len(self.messages_user))
-        pl.bar(x, self.messages_user.values(), align='center', width=0.5)
-        pl.xticks(x, self.messages_user.keys(), rotation=45)
+        pl.bar(x, sorted(self.messages_user.values(), reverse=True), align='center', width=0.5)
+        sorted_values = []
+        keys = self.messages_user.keys()
+        for value in sorted(self.messages_user.values(), reverse=True):
+            for key in self.messages_user.keys():
+                if self.messages_user[key] == value and key in keys:
+                    sorted_values.append(key)
+                    keys.remove(key)
+        pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user)
         pl.ylim(0, y_max)
         pl.axis('auto')
@@ -75,8 +82,15 @@ class FileAnalyzer:
         :return:
         """
         x = np.arange(len(self.messages_user_chars))
-        pl.bar(x, self.messages_user_chars.values(), align='center', width=0.5)
-        pl.xticks(x, self.messages_user_chars.keys(), rotation=45)
+        pl.bar(x, sorted(self.messages_user_chars.values(), reverse=True), align='center', width=0.5)
+        sorted_values = []
+        keys = self.messages_user_chars.keys()
+        for value in sorted(self.messages_user_chars.values(), reverse=True):
+            for key in self.messages_user_chars.keys():
+                if self.messages_user_chars[key] == value and key in keys:
+                    sorted_values.append(key)
+                    keys.remove(key)
+        pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_chars)
         pl.ylim(0, y_max)
         pl.axis('auto')
@@ -89,8 +103,15 @@ class FileAnalyzer:
         :return:
         """
         x = np.arange(len(self.messages_user_word))
-        pl.bar(x, self.messages_user_word.values(), align='center', width=0.5)
-        pl.xticks(x, self.messages_user_word.keys(), rotation=45)
+        pl.bar(x, sorted(self.messages_user_word.values(), reverse=True), align='center', width=0.5)
+        sorted_values = []
+        keys = self.messages_user_word.keys()
+        for value in sorted(self.messages_user_word.values(), reverse=True):
+            for key in self.messages_user_word.keys():
+                if self.messages_user_word[key] == value and key in keys:
+                    sorted_values.append(key)
+                    keys.remove(key)
+        pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_word)
         pl.ylim(0, y_max)
         pl.axis('auto')
