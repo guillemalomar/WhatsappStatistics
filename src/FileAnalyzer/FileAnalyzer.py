@@ -4,7 +4,8 @@ import numpy as np
 import math
 
 _date_line = re.compile('[0-9]+/[0-9]+/[0-9]+?')
-_message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w0-9:+, ]+')
+_message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w:+,.!?()"#\[\] ]+')
+_message_line2 = re.compile('[\w.?!\-()"#\[\] ]+')
 
 
 class FileAnalyzer:
@@ -20,6 +21,7 @@ class FileAnalyzer:
         self.messages_user = {}
         self.messages_user_chars = {}
         self.messages_user_word = {}
+        self.expulsions = {}
         self.word = None
 
     def set_word(self, word):
@@ -149,6 +151,18 @@ class FileAnalyzer:
             y_max = max_val + 1
         return y_max
 
+    def show_expulsions(self):
+        """
+        Method to show expulsions history
+        :return:
+        """
+        if len(self.expulsions) == 0:
+            print "Nobody has been expulsed"
+        else:
+            print "Expulser - Expulsed - Times expulsed"
+            for key, value in self.expulsions.iteritems():
+                print str(key[0]) + ' - ' + str(key[1]) + ' - ' + str(value)
+
     def process_input(self):
         """
         This method processes the input data and accumulates all interesting
@@ -185,6 +199,7 @@ class FileAnalyzer:
                        'aquest xat i trucades ara estan assegurats' not in line and \
                        ' t\'ha expulsat' not in line and \
                        ' t\'ha afegit' not in line:
+                        user = ''
                         n = _message_line.match(line)
                         if n is not None:
                             hour = line.split(':')[0]
@@ -198,3 +213,22 @@ class FileAnalyzer:
                             self.messages_user_word[user] = self.messages_user_word.get(user, 0)
                             if str(self.word).lower() in message.lower():
                                 self.messages_user_word[user] += 1
+                        else:
+                            o = _message_line2.match(line)
+                            if o is not None:
+                                if user != '':
+                                    self.messages_user[user] = self.messages_user.get(user, 0) + 1
+                                    self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(line)
+                                    self.messages_user_word[user] = self.messages_user_word.get(user, 0)
+                                    if str(self.word).lower() in line.lower():
+                                        self.messages_user_word[user] += 1
+                    else:
+                        if ' expulsat' in line:
+                            line = line.split(' - ')[1]
+                            if 't\'ha' in line:
+                                expulser = line.split(' ')[0]
+                                expulsed = 'me'
+                            else:
+                                expulser = line.split(' ')[0]
+                                expulsed = line.split(' ha expulsat a ')[-1]
+                            self.expulsions[(expulser, expulsed)] = self.expulsions.get((expulser, expulsed), 0) + 1

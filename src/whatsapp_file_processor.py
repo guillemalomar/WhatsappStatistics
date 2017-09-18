@@ -54,7 +54,8 @@ def show_modes():
           " 2 - Plot messages send per hour for all days\n" + \
           " 3 - Plot messages sent by each user\n" + \
           " 4 - Plot characters sent by each user\n" + \
-          " 5 - Plot times each user said a specific word"
+          " 5 - Plot times each user said a specific word\n" + \
+          " 6 - Show expulsions history"
 
 
 def check_input(input_var):
@@ -73,7 +74,7 @@ def check_input(input_var):
     elif input_var.lower() == 'help':
         message_output()
         return False
-    elif input_var not in ['1', '2', '3', '4', '5']:
+    elif input_var not in ['1', '2', '3', '4', '5', '6']:
         print "Please enter a valid mode."
         return False
     return input_var
@@ -124,3 +125,6 @@ if __name__ == '__main__':
             my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_user_word()
             my_file_analyzer.messages_user_word = {}
+        elif var == '6':
+            my_file_analyzer.process_input()
+            my_file_analyzer.show_expulsions()
