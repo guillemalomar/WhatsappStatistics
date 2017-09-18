@@ -107,17 +107,15 @@ if __name__ == '__main__':
             correct_input = check_input(var)
 
         my_file_analyzer = FileAnalyzer(input_data)
-        if var == '1':
+        if var != '5':
             my_file_analyzer.process_input()
+        if var == '1':
             my_file_analyzer.plot_messages_days()
         elif var == '2':
-            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_hours()
         elif var == '3':
-            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_user()
         elif var == '4':
-            my_file_analyzer.process_input()
             my_file_analyzer.plot_messages_user_chars()
         elif var == '5':
             word_to_search = raw_input("Please, enter a word to be searched: ")
@@ -126,5 +124,4 @@ if __name__ == '__main__':
             my_file_analyzer.plot_messages_user_word()
             my_file_analyzer.messages_user_word = {}
         elif var == '6':
-            my_file_analyzer.process_input()
             my_file_analyzer.show_expulsions()
