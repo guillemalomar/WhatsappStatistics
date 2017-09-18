@@ -35,9 +35,18 @@ class FileAnalyzer:
         This method plots the number of messages sent per day
         :return:
         """
+        sorted_keys = []
+        sorted_values = []
+        values = self.messages_day.values()
+        for key in sorted(self.messages_day.keys()):
+            for value in self.messages_day.values():
+                if self.messages_day[key] == value and value in values:
+                    sorted_keys.append(key)
+                    sorted_values.append(value)
+                    values.remove(value)
         x = np.arange(len(self.messages_day))
-        pl.bar(x, self.messages_day.values(), align='center', width=0.5)
-        pl.xticks(x, self.messages_day.keys(), rotation=45)
+        pl.bar(x, sorted_values, align='center', width=0.5)
+        pl.xticks(x, sorted_keys, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_day)
         pl.ylim(0, y_max)
         pl.axis('auto')
@@ -60,8 +69,6 @@ class FileAnalyzer:
         This method plots the number of messages sent per user
         :return:
         """
-        x = np.arange(len(self.messages_user))
-        pl.bar(x, sorted(self.messages_user.values(), reverse=True), align='center', width=0.5)
         sorted_values = []
         keys = self.messages_user.keys()
         for value in sorted(self.messages_user.values(), reverse=True):
@@ -69,6 +76,8 @@ class FileAnalyzer:
                 if self.messages_user[key] == value and key in keys:
                     sorted_values.append(key)
                     keys.remove(key)
+        x = np.arange(len(self.messages_user))
+        pl.bar(x, sorted(self.messages_user.values(), reverse=True), align='center', width=0.5)
         pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user)
         pl.ylim(0, y_max)
@@ -81,8 +90,6 @@ class FileAnalyzer:
         This method plots the number of chars from all messages sent per user
         :return:
         """
-        x = np.arange(len(self.messages_user_chars))
-        pl.bar(x, sorted(self.messages_user_chars.values(), reverse=True), align='center', width=0.5)
         sorted_values = []
         keys = self.messages_user_chars.keys()
         for value in sorted(self.messages_user_chars.values(), reverse=True):
@@ -90,6 +97,8 @@ class FileAnalyzer:
                 if self.messages_user_chars[key] == value and key in keys:
                     sorted_values.append(key)
                     keys.remove(key)
+        x = np.arange(len(self.messages_user_chars))
+        pl.bar(x, sorted(self.messages_user_chars.values(), reverse=True), align='center', width=0.5)
         pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_chars)
         pl.ylim(0, y_max)
@@ -102,8 +111,6 @@ class FileAnalyzer:
         This method plots the number of chars from all messages sent per user
         :return:
         """
-        x = np.arange(len(self.messages_user_word))
-        pl.bar(x, sorted(self.messages_user_word.values(), reverse=True), align='center', width=0.5)
         sorted_values = []
         keys = self.messages_user_word.keys()
         for value in sorted(self.messages_user_word.values(), reverse=True):
@@ -111,6 +118,8 @@ class FileAnalyzer:
                 if self.messages_user_word[key] == value and key in keys:
                     sorted_values.append(key)
                     keys.remove(key)
+        x = np.arange(len(self.messages_user_word))
+        pl.bar(x, sorted(self.messages_user_word.values(), reverse=True), align='center', width=0.5)
         pl.xticks(x, sorted_values, rotation=45)
         y_max = FileAnalyzer.calculate_max(self.messages_user_word)
         pl.ylim(0, y_max)
@@ -151,7 +160,19 @@ class FileAnalyzer:
             for line in lines:
                 m = _date_line.match(line)
                 if m is not None and ']' not in line:
-                    self.messages_day[line] = self.messages_day.get(line, 0) + 1
+                    split_line = line.split('/')
+                    if int(split_line[0]) < 10 or int(split_line[1]) < 10:
+                        final_line = ''
+                        final_line += split_line[2]
+                        if int(split_line[1]) < 10:
+                            final_line += '0'
+                        final_line += split_line[1]
+                        if int(split_line[0]) < 10:
+                            final_line += '0'
+                        final_line += split_line[0]
+                    else:
+                        final_line = split_line[2] + split_line[1] + split_line[0]
+                    self.messages_day[int(final_line)] = self.messages_day.get(int(final_line), 0) + 1
                 else:
                     if 'El codi de seguretat de ' not in line and \
                        ' ha afegit ' not in line and \
