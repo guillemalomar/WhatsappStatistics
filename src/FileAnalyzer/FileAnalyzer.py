@@ -4,11 +4,23 @@ import numpy as np
 import math
 
 _date_line = re.compile('[0-9]+/[0-9]+/[0-9]+?')
-_message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w:+,.!?()"#\[\] ]+')
+_message_line = re.compile('[0-9][0-9]:[0-9][0-9] - [\w+,.!?()"#\[\] ]+:[\w+,.!?()"#\[\] ]+')
 _message_line2 = re.compile('[\w.?!\-()"#\[\] ]+')
 
 
 class FileAnalyzer:
+
+    _reserved_messages = ['El codi de seguretat de ',
+                          ' ha afegit ',
+                          ' marxa',
+                          'ha creat el grup',
+                          'Has canviat ',
+                          'ha canviat ',
+                          'a aquest grup ara estan assegurats amb',
+                          'aquest xat i trucades ara estan assegurats',
+                          ' t\'ha expulsat',
+                          ' expulsat ',
+                          ' t\'ha afegit']
 
     def __init__(self, input_data):
         """
@@ -188,29 +200,23 @@ class FileAnalyzer:
                         final_line = split_line[2] + split_line[1] + split_line[0]
                     self.messages_day[int(final_line)] = self.messages_day.get(int(final_line), 0) + 1
                 else:
-                    if 'El codi de seguretat de ' not in line and \
-                       ' ha afegit ' not in line and \
-                       ' marxa' not in line and \
-                       'a aquest grup ara estan assegurats amb' not in line and \
-                       'ha creat el grup' not in line and \
-                       'Has canviat ' not in line and \
-                       'ha canviat ' not in line and \
-                       ' expulsat ' not in line and \
-                       'aquest xat i trucades ara estan assegurats' not in line and \
-                       ' t\'ha expulsat' not in line and \
-                       ' t\'ha afegit' not in line:
+                    if True not in [x in line for x in FileAnalyzer._reserved_messages]:
                         user = ''
                         n = _message_line.match(line)
                         if n is not None:
                             hour = line.split(':')[0]
                             self.messages_hours[hour] = self.messages_hours.get(hour, 0) + 1
+
                             user = line.split(':')[1].split(' - ')[1]
                             if '(' in user:
                                 user = user.split('(')[0]
                             self.messages_user[user] = self.messages_user.get(user, 0) + 1
+
                             message = line.split(':')[-1]
                             self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(message)
+
                             self.messages_user_word[user] = self.messages_user_word.get(user, 0)
+
                             if str(self.word).lower() in message.lower():
                                 self.messages_user_word[user] += 1
                         else:
@@ -218,8 +224,11 @@ class FileAnalyzer:
                             if o is not None:
                                 if user != '':
                                     self.messages_user[user] = self.messages_user.get(user, 0) + 1
+
                                     self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(line)
+
                                     self.messages_user_word[user] = self.messages_user_word.get(user, 0)
+
                                     if str(self.word).lower() in line.lower():
                                         self.messages_user_word[user] += 1
                     else:

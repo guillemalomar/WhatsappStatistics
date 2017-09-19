@@ -1,4 +1,3 @@
-import sys
 from FileAnalyzer.FileAnalyzer import FileAnalyzer
 import argparse
 
