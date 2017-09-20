@@ -54,7 +54,8 @@ def show_modes():
           " 3 - Plot messages sent by each user\n" + \
           " 4 - Plot characters sent by each user\n" + \
           " 5 - Plot times each user said a specific word\n" + \
-          " 6 - Show expulsions history"
+          " 6 - Show expulsions history\n" + \
+          " 7 - Show media added by user"
 
 
 def check_input(input_var):
@@ -73,7 +74,7 @@ def check_input(input_var):
     elif input_var.lower() == 'help':
         message_output()
         return False
-    elif input_var not in ['1', '2', '3', '4', '5', '6']:
+    elif input_var not in ['1', '2', '3', '4', '5', '6', '7']:
         print "Please enter a valid mode."
         return False
     return input_var
@@ -131,3 +132,7 @@ if __name__ == '__main__':
             if my_file_analyzer.expulsions == {}:
                 my_file_analyzer.process_input()
             my_file_analyzer.show_expulsions()
+        elif var == '7':
+            if my_file_analyzer.added_media == {}:
+                my_file_analyzer.process_input()
+            my_file_analyzer.plot_user_media()

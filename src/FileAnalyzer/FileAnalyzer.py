@@ -35,6 +35,7 @@ class FileAnalyzer:
         self.messages_user_word = {}
         self.expulsions = {}
         self.expulsions_by_user = {}
+        self.added_media = {}
         self.word = None
 
     def set_word(self, word):
@@ -142,6 +143,30 @@ class FileAnalyzer:
         pl.title('Times every user has said ' + str(self.word))
         pl.show()
 
+    def plot_user_media(self):
+        """
+        This method plots the number of chars from all messages sent per user
+        :return:
+        """
+        sorted_values = []
+        keys = self.added_media.keys()
+        total_media = 0
+        for value in sorted(self.added_media.values(), reverse=True):
+            total_media += value
+            for key in self.added_media.keys():
+                if self.added_media[key] == value and key in keys:
+                    sorted_values.append(key)
+                    keys.remove(key)
+        x = np.arange(len(self.added_media))
+        pl.bar(x, sorted(self.added_media.values(), reverse=True), align='center', width=0.5)
+        pl.xticks(x, sorted_values, rotation=45)
+        y_max = FileAnalyzer.calculate_max(self.added_media)
+        pl.ylim(0, y_max)
+        pl.axis('auto')
+        pl.title('Times every user uploaded any kind of media')
+        pl.show()
+        print "Total media uploads:", total_media
+
     @staticmethod
     def calculate_max(dictionary):
         """
@@ -211,7 +236,6 @@ class FileAnalyzer:
             final_line = date[2] + date[1] + date[0]
         return final_line
 
-
     def process_input(self):
         """
         This method processes the input data and accumulates all interesting
@@ -242,9 +266,8 @@ class FileAnalyzer:
                             message = line.split(':')[-1]
                             FileAnalyzer.increase_statistic(self.messages_user_chars, user, len(message))
 
-                            print message
-                            if message == '\<Mitjans omesos\>':
-                                print "message:", message
+                            if message == ' <Mitjans omesos>':
+                                FileAnalyzer.increase_statistic(self.added_media, user)
 
                             if str(self.word).lower() in message.lower():
                                 FileAnalyzer.increase_statistic(self.messages_user_word, user)
@@ -256,7 +279,7 @@ class FileAnalyzer:
 
                                     FileAnalyzer.increase_statistic(self.messages_user_chars, len(line))
 
-                                    if str(self.word).lower() in message.lower():
+                                    if str(self.word).lower() in line.lower():
                                         FileAnalyzer.increase_statistic(self.messages_user_word, user)
                     else:
                         if ' expulsat' in line:
