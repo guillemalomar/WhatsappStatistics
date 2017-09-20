@@ -34,6 +34,7 @@ class FileAnalyzer:
         self.messages_user_chars = {}
         self.messages_user_word = {}
         self.expulsions = {}
+        self.expulsions_by_user = {}
         self.word = None
 
     def set_word(self, word):
@@ -138,7 +139,7 @@ class FileAnalyzer:
         y_max = FileAnalyzer.calculate_max(self.messages_user_word)
         pl.ylim(0, y_max)
         pl.axis('auto')
-        pl.title('Times every user has said a given word')
+        pl.title('Times every user has said ' + str(self.word))
         pl.show()
 
     @staticmethod
@@ -163,6 +164,17 @@ class FileAnalyzer:
             y_max = max_val + 1
         return y_max
 
+    @staticmethod
+    def increase_statistic(dictionary, key, to_increase=1):
+        """
+        Method to simplify process_input method
+        :param dictionary: dictionary to be increased
+        :param key: position in the dictionary to be increased
+        :param to_increase: value to increase
+        :return:
+        """
+        dictionary[key] = dictionary.get(key, 0) + to_increase
+
     def show_expulsions(self):
         """
         Method to show expulsions history
@@ -171,9 +183,12 @@ class FileAnalyzer:
         if len(self.expulsions) == 0:
             print "Nobody has been expulsed"
         else:
-            print "Expulser - Expulsed - Times expulsed"
+            print "Expulser - Expulsed - Times expulsed ############"
             for key, value in self.expulsions.iteritems():
                 print str(key[0]) + ' - ' + str(key[1]) + ' - ' + str(value)
+            print "Most prolific expulsers #########################"
+            for key, value in self.expulsions_by_user.iteritems():
+                print str(key) + " - " + str(value) + " expulsions"
 
     def process_input(self):
         """
@@ -198,46 +213,49 @@ class FileAnalyzer:
                         final_line += split_line[0]
                     else:
                         final_line = split_line[2] + split_line[1] + split_line[0]
-                    self.messages_day[int(final_line)] = self.messages_day.get(int(final_line), 0) + 1
+                    FileAnalyzer.increase_statistic(self.messages_day, int(final_line))
                 else:
                     if True not in [x in line for x in FileAnalyzer._reserved_messages]:
                         user = ''
                         n = _message_line.match(line)
                         if n is not None:
                             hour = line.split(':')[0]
-                            self.messages_hours[hour] = self.messages_hours.get(hour, 0) + 1
+                            FileAnalyzer.increase_statistic(self.messages_hours, int(hour))
 
                             user = line.split(':')[1].split(' - ')[1]
                             if '(' in user:
                                 user = user.split('(')[0]
-                            self.messages_user[user] = self.messages_user.get(user, 0) + 1
+                            FileAnalyzer.increase_statistic(self.messages_user, user)
 
                             message = line.split(':')[-1]
-                            self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(message)
+                            FileAnalyzer.increase_statistic(self.messages_user_chars, user, len(message))
 
-                            self.messages_user_word[user] = self.messages_user_word.get(user, 0)
+                            print message
+                            if message == '\<Mitjans omesos\>':
+                                print "message:", message
 
                             if str(self.word).lower() in message.lower():
-                                self.messages_user_word[user] += 1
+                                FileAnalyzer.increase_statistic(self.messages_user_word, user)
                         else:
                             o = _message_line2.match(line)
                             if o is not None:
                                 if user != '':
-                                    self.messages_user[user] = self.messages_user.get(user, 0) + 1
+                                    FileAnalyzer.increase_statistic(self.messages_user, user)
 
-                                    self.messages_user_chars[user] = self.messages_user_chars.get(user, 0) + len(line)
+                                    FileAnalyzer.increase_statistic(self.messages_user_chars, len(line))
 
-                                    self.messages_user_word[user] = self.messages_user_word.get(user, 0)
-
-                                    if str(self.word).lower() in line.lower():
-                                        self.messages_user_word[user] += 1
+                                    if str(self.word).lower() in message.lower():
+                                        FileAnalyzer.increase_statistic(self.messages_user_word, user)
                     else:
                         if ' expulsat' in line:
                             line = line.split(' - ')[1]
-                            if 't\'ha' in line:
-                                expulser = line.split(' ')[0]
+                            if 't\'ha expulsat' in line:
+                                expulser = line.split(' t\'ha expulsat')[0]
                                 expulsed = 'me'
-                            else:
-                                expulser = line.split(' ')[0]
+                                FileAnalyzer.increase_statistic(self.expulsions_by_user, expulser)
+                                FileAnalyzer.increase_statistic(self.expulsions, (expulser, expulsed))
+                            elif  ' ha expulsat a ' in line:
+                                expulser = line.split(' ha expulsat a ')[0]
                                 expulsed = line.split(' ha expulsat a ')[-1]
-                            self.expulsions[(expulser, expulsed)] = self.expulsions.get((expulser, expulsed), 0) + 1
+                                FileAnalyzer.increase_statistic(self.expulsions_by_user, expulser)
+                                FileAnalyzer.increase_statistic(self.expulsions, (expulser, expulsed))
