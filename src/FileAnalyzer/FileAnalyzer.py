@@ -190,6 +190,28 @@ class FileAnalyzer:
             for key, value in self.expulsions_by_user.iteritems():
                 print str(key) + " - " + str(value) + " expulsions"
 
+    @staticmethod
+    def process_date(date):
+        """
+        Method that processes a date in order to be able to
+        order them in method plot_messages_days
+        :param date: a message date
+        :return:
+        """
+        if int(date[0]) < 10 or int(date[1]) < 10:
+            final_line = ''
+            final_line += date[2]
+            if int(date[1]) < 10:
+                final_line += '0'
+            final_line += date[1]
+            if int(date[0]) < 10:
+                final_line += '0'
+            final_line += date[0]
+        else:
+            final_line = date[2] + date[1] + date[0]
+        return final_line
+
+
     def process_input(self):
         """
         This method processes the input data and accumulates all interesting
@@ -202,17 +224,7 @@ class FileAnalyzer:
                 m = _date_line.match(line)
                 if m is not None and ']' not in line:
                     split_line = line.split('/')
-                    if int(split_line[0]) < 10 or int(split_line[1]) < 10:
-                        final_line = ''
-                        final_line += split_line[2]
-                        if int(split_line[1]) < 10:
-                            final_line += '0'
-                        final_line += split_line[1]
-                        if int(split_line[0]) < 10:
-                            final_line += '0'
-                        final_line += split_line[0]
-                    else:
-                        final_line = split_line[2] + split_line[1] + split_line[0]
+                    final_line = FileAnalyzer.process_date(split_line)
                     FileAnalyzer.increase_statistic(self.messages_day, int(final_line))
                 else:
                     if True not in [x in line for x in FileAnalyzer._reserved_messages]:
